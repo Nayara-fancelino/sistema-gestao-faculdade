@@ -1,4 +1,5 @@
 ﻿using sistema_gestao_faculdade.Entity;
+using System.Globalization;
 
 List<Curso> cursos = new List<Curso>();
 List<Disciplina> disciplinas = new List<Disciplina>();
@@ -99,6 +100,58 @@ do
 
 } while (opcao != 0);
 
+
+// 4 - Cadastrar Disciplina
+static void CadastrarDiscplina(List<Disciplina> disciplinas, List<Professor> professores)
+{
+    if (professores.Count == 0)
+    {
+        Console.WriteLine("\nNenhuma professor cadastrado.");
+        return;
+    }
+
+    Console.WriteLine("\n===== CADASTRAR DISCIPLINA =====\n");
+
+    Console.Write("Código: ");
+    var codigo = Console.ReadLine().ToUpper();
+
+    if (disciplinas.Any(x => x.Codigo == codigo))
+    {
+        Console.WriteLine("\nDisciplina já cadastrada.");
+        return;
+    }
+
+    Console.Write("Nome: ");
+    var nome = Console.ReadLine();
+
+    // Cada letra de cara palavra maiuscula
+    TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+    string textoFormatado = textInfo.ToTitleCase(nome.ToLower());
+
+    Console.Write("Carga Hóraria: ");
+    if (!int.TryParse(Console.ReadLine(), out int cargaHoraria))
+    {
+        Console.WriteLine("\nDigite um valor válido.");
+        return;
+    }
+
+    Console.Write("Professor Responsável: ");
+    var professorResponsavel = Console.ReadLine();
+
+    var professorEncontrado = professores.FirstOrDefault(x => x.Registro == professorResponsavel);
+    if (professorEncontrado == null)
+    {
+        Console.WriteLine("\nProfessor não encontrado.");
+        return;
+    }
+
+    disciplinas.Add(new Disciplina(codigo, textoFormatado, cargaHoraria, professorEncontrado));
+
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine($"\nDisciplina {nome} cadastrada.");
+
+    Console.ForegroundColor = ConsoleColor.White;
+}
 
 // 5 - Vincular disciplina a um curso
 static void VincularDisciplinaCurso(List<Curso> cursos, List<Disciplina> disciplinas)
