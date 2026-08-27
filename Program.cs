@@ -1,4 +1,9 @@
-﻿int opcao;
+﻿using sistema_gestao_faculdade.Entity;
+
+List<Curso> cursos = new List<Curso>();
+List<Disciplina> disciplinas = new List<Disciplina>();
+
+int opcao;
 
 do
 {
@@ -93,3 +98,56 @@ do
     }
 
 } while (opcao != 0);
+
+
+// 5 - Vincular disciplina a um curso
+static void VincularDisciplinaCurso(List<Curso> cursos, List<Disciplina> disciplinas)
+{
+    if (disciplinas.Count == 0 || cursos.Count == 0)
+    {
+        Console.WriteLine("\nNenhuma disciplina ou curso cadastrado.");
+        return;
+    }
+
+    Console.WriteLine("\n===== VINCULAR DISCIPLINA AO CURSO =====\n");
+
+    Console.Write("Código: ");
+    string CodigoCurso = Console.ReadLine().Trim().ToUpper();
+
+    var cursoEncontrado = cursos.FirstOrDefault(x => x.Codigo == CodigoCurso);
+    if (cursoEncontrado is null)
+    {
+        Console.WriteLine($"\nCódigo {CodigoCurso} não encontrado.");
+        return;
+    }
+
+    Console.Write("Disciplina: ");
+    string CodigoDisciplina = Console.ReadLine().Trim().ToUpper();
+
+    var disciplinaEncontrada = disciplinas.FirstOrDefault(x => x.Codigo == CodigoDisciplina);
+    if (disciplinaEncontrada is null)
+    {
+        Console.WriteLine($"\nCódigo da disciplina não encontrado.");
+        return;
+    }
+
+    if (cursoEncontrado.disciplinas.Any(x => x.Codigo == CodigoDisciplina))
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("\nEssa disciplina já foi adicionada ao curso.");
+
+        Console.ForegroundColor = ConsoleColor.White;
+        return;
+    }
+
+    cursoEncontrado.disciplinas.Add(disciplinaEncontrada);
+
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine($"\nA Disciplina {CodigoDisciplina} vinculada ao curso {CodigoCurso}.");
+
+    Console.ForegroundColor = ConsoleColor.White;
+    Console.WriteLine();
+
+    disciplinaEncontrada.ExibirInformacoes(cursoEncontrado);
+
+}
