@@ -37,6 +37,7 @@ do
     {
         case 1:
             Console.WriteLine("Cadastrar curso");
+            CadastrarCurso(cursos);
             break;
 
         case 2:
@@ -49,10 +50,12 @@ do
 
         case 4:
             Console.WriteLine("Cadastrar disciplina");
+            CadastrarDiscplina(disciplinas, professores);
             break;
 
         case 5:
             Console.WriteLine("Vincular disciplina a um curso");
+            VincularDisciplinaCurso(cursos, disciplinas);
             break;
 
         case 6:
@@ -100,6 +103,47 @@ do
 
 } while (opcao != 0);
 
+// 1 - Cadastrar Curso
+static void CadastrarCurso(List<Curso> cursos)
+{
+    Console.WriteLine("\n===== CADASTRAR CURSO =====\n");
+
+    Console.Write("Código: ");
+    var codigo = Console.ReadLine().Trim().ToUpper();
+
+    var cursoEncontrado = cursos.FirstOrDefault(x => x.Codigo == codigo);
+    if (cursos.Contains(cursoEncontrado))
+    {
+        Console.WriteLine("\nEste curso já está cadastrado.");
+        return;
+    }
+
+    Console.Write("Nome do Curso: ");
+    var nomeCurso = Console.ReadLine();
+
+    TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
+    string textoFormatado = textInfo.ToTitleCase(nomeCurso.ToLower());
+
+    Console.WriteLine("\n1 - Graduação\n2 - Pós-Graduação");
+
+    Console.Write("Tipo: ");
+    if (!int.TryParse(Console.ReadLine().Trim(), out int tipo))
+    {
+        Console.WriteLine("Digite um número válido.");
+        return;
+    }
+
+    TipoCurso tipoCurso = (TipoCurso)tipo;
+
+    Curso curso = new Curso(codigo, textoFormatado, tipoCurso);
+    cursos.Add(curso);
+
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine($"\nCurso {nomeCurso} cadastrado com sucesso!");
+
+    Console.ForegroundColor = ConsoleColor.White;
+}
+
 
 // 4 - Cadastrar Disciplina
 static void CadastrarDiscplina(List<Disciplina> disciplinas, List<Professor> professores)
@@ -113,7 +157,7 @@ static void CadastrarDiscplina(List<Disciplina> disciplinas, List<Professor> pro
     Console.WriteLine("\n===== CADASTRAR DISCIPLINA =====\n");
 
     Console.Write("Código: ");
-    var codigo = Console.ReadLine().ToUpper();
+    var codigo = Console.ReadLine().Trim().ToUpper();
 
     if (disciplinas.Any(x => x.Codigo == codigo))
     {
