@@ -25,6 +25,14 @@ static void CadastrarProfessor()
     string nome = Console.ReadLine()?.Trim();
     Console.Write("E-mail: ");
     string email = Console.ReadLine()?.Trim();
+
+    if (professores.Any(p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
+       alunos.Any(a => a.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
+    {
+        Console.WriteLine("Erro: Este e-mail já está cadastrado no sistema!");
+        return;
+    }
+
     Console.Write("Especialidade: ");
     string especialidade = Console.ReadLine()?.Trim();
 
