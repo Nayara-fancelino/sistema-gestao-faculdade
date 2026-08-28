@@ -183,6 +183,12 @@ static void CadastrarDiscplina(List<Disciplina> disciplinas, List<Professor> pro
         return;
     }
 
+    if (cargaHoraria <= 0)
+    {
+        Console.WriteLine("\nDigite um valor válido.");
+        return;
+    }
+
     Console.Write("Professor Responsável: ");
     var professorResponsavel = Console.ReadLine();
 
