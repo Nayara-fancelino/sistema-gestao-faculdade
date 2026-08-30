@@ -1,9 +1,29 @@
 ﻿using sistema_gestao_faculdade.Entity;
-using System.Globalization;
 
-List<Aluno> alunos = new List<Aluno>();
-List<Curso> cursos = new List<Curso>();
-List<Disciplina> disciplinas = new List<Disciplina>();
+List<Professor> professores = new List<Professor>()
+{
+    new Professor("Eduarda Campos", "12345678900", "CamposProf@gmail.com", "2026020801", "Desenvolvedor de Software"),
+    new Professor("Guilherme Ralla", "12345678901", "RallaProf@gmail.com", "2026020802", "Desenvolvedor Back-End")
+};
+
+List<Aluno> alunos = new List<Aluno>()
+{
+    new Aluno("Pedro Henrique", "12345678902", "PedroAluno01@gmail.com", "20260200"),
+    new Aluno("Leticia Amorin", "12345678903", "AmorinAluno02@gmail.com", "20260201"),
+};
+List<Curso> cursos = new List<Curso>()
+{
+    new Curso("ADS", "Análise e Desenvolvimento de Sistemas", TipoCurso.Graduacao),
+    new Curso("TI", "Tecnologia da Informação", TipoCurso.Graduacao),
+    new Curso("PDFS", "Pós-Graduação em Desenvolvimento Full Stack", TipoCurso.PosGraduacao),
+    new Curso("PES", "Pós-Graduação em Engenharia de Software", TipoCurso.PosGraduacao)
+};
+List<Disciplina> disciplinas = new List<Disciplina>() 
+{ 
+    new Disciplina("POO", "Programação Orientada a Objetos", 250, professores[1])
+};
+
+
 List<Boletim> boletins = new List<Boletim>();
 
 int opcao;
@@ -39,7 +59,7 @@ do
     {
         case 1:
             Console.WriteLine("Cadastrar curso");
-            CadastrarCurso(cursos);
+            Curso.CadastrarCurso(cursos);
             break;
 
         case 2:
@@ -52,12 +72,12 @@ do
 
         case 4:
             Console.WriteLine("Cadastrar disciplina");
-            CadastrarDiscplina(disciplinas, professores);
+            Disciplina.CadastrarDisciplina(professores, disciplinas);
             break;
 
         case 5:
             Console.WriteLine("Vincular disciplina a um curso");
-            VincularDisciplinaCurso(cursos, disciplinas);
+            Curso.VincularDisciplinaCurso(cursos, disciplinas);
             break;
 
         case 6:
@@ -108,177 +128,33 @@ do
 } while (opcao != 0);
 
 
-// 1 - Cadastrar Curso
-static void CadastrarCurso(List<Curso> cursos)
+// 6 - Matricular aluno em curso
+static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
 {
-    Console.WriteLine("\n===== CADASTRAR CURSO =====\n");
-
-    Console.Write("Código: ");
-    var codigo = Console.ReadLine().Trim().ToUpper();
-
-    var cursoEncontrado = cursos.FirstOrDefault(x => x.Codigo == codigo);
-    if (cursos.Contains(cursoEncontrado))
+    if (alunos.Count == 0)
     {
-        Console.WriteLine("\nEste curso já está cadastrado.");
-        return;
-    }
-
-    Console.Write("Nome do Curso: ");
-    var nomeCurso = Console.ReadLine();
-
-    TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-    string textoFormatado = textInfo.ToTitleCase(nomeCurso.ToLower());
-
-    Console.WriteLine("\n1 - Graduação\n2 - Pós-Graduação");
-
-    Console.Write("Tipo: ");
-    if (!int.TryParse(Console.ReadLine().Trim(), out int tipo))
-    {
-        Console.WriteLine("Digite um número válido.");
-        return;
-    }
-
-    TipoCurso tipoCurso = (TipoCurso)tipo;
-
-    Curso curso = new Curso(codigo, textoFormatado, tipoCurso);
-    cursos.Add(curso);
-
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.WriteLine($"\nCurso {nomeCurso} cadastrado com sucesso!");
-
-    Console.ForegroundColor = ConsoleColor.White;
-}
-
-// 4 - Cadastrar Disciplina
-static void CadastrarDiscplina(List<Disciplina> disciplinas, List<Professor> professores)
-{
-    if (professores.Count == 0)
-    {
-        Console.WriteLine("\nNenhuma professor cadastrado.");
-        return;
-    }
-
-    Console.WriteLine("\n===== CADASTRAR DISCIPLINA =====\n");
-
-    Console.Write("Código: ");
-    var codigo = Console.ReadLine().Trim().ToUpper();
-
-    if (disciplinas.Any(x => x.Codigo == codigo))
-    {
-        Console.WriteLine("\nDisciplina já cadastrada.");
-        return;
-    }
-
-    Console.Write("Nome: ");
-    var nome = Console.ReadLine();
-
-    // Cada letra de cara palavra maiuscula
-    TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-    string textoFormatado = textInfo.ToTitleCase(nome.ToLower());
-
-    Console.Write("Carga Hóraria: ");
-    if (!int.TryParse(Console.ReadLine(), out int cargaHoraria))
-    {
-        Console.WriteLine("\nDigite um valor válido.");
-        return;
-    }
-
-    if (cargaHoraria <= 0)
-    {
-        Console.WriteLine("\nDigite um valor válido.");
-        return;
-    }
-
-    Console.Write("Professor Responsável: ");
-    var professorResponsavel = Console.ReadLine();
-
-    var professorEncontrado = professores.FirstOrDefault(x => x.Registro == professorResponsavel);
-    if (professorEncontrado == null)
-    {
-        Console.WriteLine("\nProfessor não encontrado.");
-        return;
-    }
-
-    disciplinas.Add(new Disciplina(codigo, textoFormatado, cargaHoraria, professorEncontrado));
-
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.WriteLine($"\nDisciplina {nome} cadastrada.");
-
-    Console.ForegroundColor = ConsoleColor.White;
-}
-
-// 5 - Vincular disciplina a um curso
-static void VincularDisciplinaCurso(List<Curso> cursos, List<Disciplina> disciplinas)
-{
-    if (disciplinas.Count == 0 || cursos.Count == 0)
-    {
-        Console.WriteLine("\nNenhuma disciplina ou curso cadastrado.");
-        return;
-    }
-
-    Console.WriteLine("\n===== VINCULAR DISCIPLINA AO CURSO =====\n");
-
-    Console.Write("Código: ");
-    string CodigoCurso = Console.ReadLine().Trim().ToUpper();
-
-    var cursoEncontrado = cursos.FirstOrDefault(x => x.Codigo == CodigoCurso);
-    if (cursoEncontrado is null)
-    {
-        Console.WriteLine($"\nCódigo {CodigoCurso} não encontrado.");
-        return;
-    }
-
-    Console.Write("Disciplina: ");
-    string CodigoDisciplina = Console.ReadLine().Trim().ToUpper();
-
-    var disciplinaEncontrada = disciplinas.FirstOrDefault(x => x.Codigo == CodigoDisciplina);
-    if (disciplinaEncontrada is null)
-    {
-        Console.WriteLine($"\nCódigo da disciplina não encontrado.");
-        return;
-    }
-
-    if (cursoEncontrado.disciplinas.Any(x => x.Codigo == CodigoDisciplina))
-    {
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("\nEssa disciplina já foi adicionada ao curso.");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nNenhum aluno cadastrado.");
 
         Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
-    cursoEncontrado.disciplinas.Add(disciplinaEncontrada);
-
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.WriteLine($"\nA Disciplina {CodigoDisciplina} vinculada ao curso {CodigoCurso}.");
-
-    Console.ForegroundColor = ConsoleColor.White;
-    Console.WriteLine();
-
-    disciplinaEncontrada.ExibirInformacoes(cursoEncontrado);
-
-}
-
-// 6 - Matricular aluno em curso
-static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
-{
-    if (alunos.Count == 0 || cursos.Count == 0)
+    if (cursos.Count == 0)
     {
-        Console.WriteLine("\nNenhum aluno ou curso cadastrado.");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nNenhum curso cadastrado.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
     Console.WriteLine("\n===== MATRICULAR ALUNO EM CURSO =====\n");
 
     Console.Write("Matricula do Aluno: ");
+    var matricula = Console.ReadLine().Trim().ToUpper();
 
-    if (!int.TryParse(Console.ReadLine().Trim(), out int matricula))
-    {
-        Console.WriteLine("\nDigite um número válido.");
-        return;
-    }
-
-    var alunoMatricula = alunos.FirstOrDefault(x => x.Matricula == matricula);
+    var alunoMatricula = alunos.FirstOrDefault(x => x.NumeroMatricula == matricula);
     if (alunoMatricula == null)
     {
         Console.WriteLine("\nAluno não encontrado.");
@@ -290,15 +166,24 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
 
     Console.ForegroundColor = ConsoleColor.White;
     Console.WriteLine($"\nAluno: {alunoMatricula.Nome}");
-    Console.WriteLine($"Matricula: {alunoMatricula.Matricula}");
+    Console.WriteLine($"Matricula: {alunoMatricula.NumeroMatricula}");
 
     Console.Write("\nCurso: ");
-    var curso = Console.ReadLine().ToUpper().Trim();
+    var curso = Console.ReadLine().Trim().ToUpper();
 
     var cursoCodigo = cursos.FirstOrDefault(x => x.Codigo == curso);
     if (cursoCodigo == null)
     {
         Console.WriteLine("\nCurso não encontrado.");
+        return;
+    }
+
+    if (!cursoCodigo.disciplinas.Any())
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nNão é possível matricular o aluno. Este curso ainda não possui disciplinas.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
@@ -310,10 +195,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
 
     alunoMatricula.cursos.Add(cursoCodigo);
 
-    foreach (var disciplina in cursoCodigo.disciplinas)
-    {
-        alunoMatricula.boletins.Add(new Boletim(alunoMatricula, cursoCodigo, disciplina));
-    }
+    alunoMatricula.boletins.Add(new Boletim(alunoMatricula, cursoCodigo));
 
     Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine($"\nAluno {alunoMatricula.Nome} cadastrado no curso {cursoCodigo.Nome}!");
@@ -321,7 +203,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
     Console.ForegroundColor = ConsoleColor.White;
     Console.WriteLine();
     Console.WriteLine($"Aluno: {alunoMatricula.Nome}");
-    Console.WriteLine($"Matrícula: {alunoMatricula.Matricula}");
+    Console.WriteLine($"Matrícula: {alunoMatricula.NumeroMatricula}");
     Console.WriteLine($"\nCurso: {cursoCodigo.Nome}");
     Console.WriteLine($"Tipo: {Curso.FormatarTipo(cursoCodigo.Tipo)}");
     Console.WriteLine();
@@ -330,25 +212,36 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
 // 7 - Lançar nota
 static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> disciplinas)
 {
-    if (alunos.Count == 0 || cursos.Count == 0)
+    if (alunos.Count == 0)
     {
-        Console.WriteLine("\nNenhum aluno ou curso cadastrado.");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nNenhum aluno cadastrado.");
+
+        Console.ForegroundColor = ConsoleColor.White;
+        return;
+    }
+
+    if (cursos.Count == 0)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nNenhum curso cadastrado.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
     Console.WriteLine("\n===== LANÇAR NOTA =====\n");
 
     Console.Write("Matricula do Aluno: ");
-    if (!int.TryParse(Console.ReadLine(), out int matricula))
-    {
-        Console.WriteLine("\nDigite um número válido.");
-        return;
-    }
+    var matricula = Console.ReadLine().Trim().ToUpper();
 
-    var alunoEncontrado = alunos.FirstOrDefault(x => x.Matricula == matricula);
+    var alunoEncontrado = alunos.FirstOrDefault(x => x.NumeroMatricula == matricula);
     if (alunoEncontrado == null)
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("\nAluno não encontrado.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
@@ -358,13 +251,28 @@ static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> 
     var cursoEncontrado = cursos.FirstOrDefault(x => x.Codigo == curso);
     if (cursoEncontrado == null)
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("\nCurso não encontrado.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
     if (!alunoEncontrado.cursos.Contains(cursoEncontrado))
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"\nAluno {alunoEncontrado.Nome} não está matriculado no curso {cursoEncontrado.Nome}.");
+
+        Console.ForegroundColor = ConsoleColor.White;
+        return;
+    }
+
+    if (cursoEncontrado.disciplinas.Count == 0)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nNenhuma disciplina cadastrada.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
@@ -374,23 +282,30 @@ static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> 
     var disciplinaEncontrada = disciplinas.FirstOrDefault(x => x.Codigo == disciplina);
     if (disciplinaEncontrada == null)
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("\nDisciplina não encontrada.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
     if (!cursoEncontrado.disciplinas.Contains(disciplinaEncontrada))
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"\nA disciplina {disciplinaEncontrada.Nome} não foi matriculado ao curso {cursoEncontrado.Nome}.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
-    var boletim = alunoEncontrado.boletins.FirstOrDefault(
-        x => x.Curso == cursoEncontrado &&
-        x.Disciplina == disciplinaEncontrada);
+    var boletim = alunoEncontrado.boletins.FirstOrDefault(x => x.Curso.Codigo == cursoEncontrado.Codigo);
 
     if (boletim == null)
     {
-        Console.WriteLine("\nBoletim não encontrado para está matrícula.");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nBoletim não encontrado para esta matrícula.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
@@ -399,17 +314,23 @@ static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> 
     Console.Write("Nota: ");
     if (!double.TryParse(Console.ReadLine(), out double nota))
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("\nDigite um valor válido.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
     if (nota < 0 || nota > 10)
     {
-        Console.WriteLine("\nDigite uma nota entra 0 e 10.");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nDigite uma nota entre 0 e 10.");
+
+        Console.ForegroundColor = ConsoleColor.White;
         return;
     }
 
-    boletim.LancarNota(nota, tipoCurso);
+    boletim.LancarNota(disciplinaEncontrada, nota);
 
     Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("\nA nota foi atribuida.");

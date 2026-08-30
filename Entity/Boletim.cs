@@ -1,54 +1,27 @@
 ﻿namespace sistema_gestao_faculdade.Entity
 {
-    internal class Boletim
+    public class Boletim
     {
         public Aluno Aluno { get; }
         public Curso Curso { get; }
-        public Disciplina Disciplina { get; }
-        public double Nota { get; private set; }
-        public bool Aprovado { get; private set; }
-        public string Situacao => Aprovado ? "Aprovado" : "Reprovado";
-        public Boletim(Aluno aluno, Curso curso, Disciplina disciplina)
+        public Dictionary<string, double> Notas { get; } = new();
+
+        public Boletim(Aluno aluno, Curso curso)
         {
             Aluno = aluno;
             Curso = curso;
-            Disciplina = disciplina;
-            Nota = 0;
         }
 
-        public void LancarNota(double nota, TipoCurso tipoCurso)
+        public void LancarNota(Disciplina disciplina, double nota)
         {
-            ValidarNota(nota, tipoCurso);
-            Nota = nota;
+            Notas[disciplina.Codigo] = nota;
         }
 
-        private void ValidarNota(double nota, TipoCurso tipoCurso)
+        public string ObterSituacao(double nota)
         {
-            if (tipoCurso == TipoCurso.Graduacao)
-            {
-                if (nota >= 7)
-                    TornarAprovado();
-                else
-                    TornarReprovado();
-            }
+            if (Curso.Tipo == TipoCurso.Graduacao) return nota >= 7 ? "Aprovado" : "Reprovado";
 
-            if (tipoCurso == TipoCurso.PosGraduacao)
-            {
-                if (nota >= 8)
-                    TornarAprovado();
-                else
-                    TornarReprovado();
-            }
-        }
-
-        private void TornarAprovado()
-        {
-            Aprovado = true;
-        }
-
-        private void TornarReprovado()
-        {
-            Aprovado = false;
+            return nota >= 8 ? "Aprovado" : "Reprovado";
         }
     }
 }
