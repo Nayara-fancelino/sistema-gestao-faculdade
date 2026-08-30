@@ -145,7 +145,7 @@
                 // Identifica se a pessoa atual é um Aluno ou Professor
                 string tipo = p is Aluno ? "Aluno" : "Professor";
 
-                Console.WriteLine($"[{tipo}] Nome: {p.Nome} | CPF: {p.CPF} | E-mail: {p.Email}");
+                Console.WriteLine($"[{tipo}] Matricula: {((Aluno)p).NumeroMatricula} | Nome: {p.Nome} | CPF: {p.CPF} | E-mail: {p.Email}");
 
                 // Aproveita o método para exibir notificações de cada um, se houver
                 ExibirNotificacoesPessoa(p);
