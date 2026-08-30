@@ -1,6 +1,11 @@
-﻿using System;
-
-static void CadastrarProfessor()
+﻿namespace SistemaAcademico
+{
+    public class Principal
+{
+    private static List<Professor> professores = new List<Professor>();
+    private static List<Aluno> alunos = new List<Aluno>();
+    
+    static void CadastrarProfessor()
 {
     Console.WriteLine("--- Cadastro de Professor ---");
     Console.Write("CPF: ");
@@ -113,3 +118,5 @@ static void EnviarNotificacao()
     todasPessoas[index - 1].ReceberNotificacao(mensagem);
     Console.WriteLine("Notificação enviada com sucesso!");
 }
+} 
+} 
