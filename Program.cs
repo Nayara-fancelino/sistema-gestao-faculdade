@@ -48,6 +48,7 @@ namespace sistema_gestao_faculdade.Entity
 
                     case 3:
                         Console.WriteLine("Cadastrar aluno");
+                        Principal.CadastrarAluno();
                         break;
 
                     case 4:
