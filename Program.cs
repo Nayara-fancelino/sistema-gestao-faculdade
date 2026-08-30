@@ -18,8 +18,8 @@ List<Curso> cursos = new List<Curso>()
     new Curso("PDFS", "Pós-Graduação em Desenvolvimento Full Stack", TipoCurso.PosGraduacao),
     new Curso("PES", "Pós-Graduação em Engenharia de Software", TipoCurso.PosGraduacao)
 };
-List<Disciplina> disciplinas = new List<Disciplina>() 
-{ 
+List<Disciplina> disciplinas = new List<Disciplina>()
+{
     new Disciplina("POO", "Programação Orientada a Objetos", 250, professores[1])
 };
 
@@ -109,7 +109,9 @@ do
         case 12:
             Console.WriteLine("Enviar notificação");
             break;
-
+        case 13:
+            Console.WriteLine("Boletim");
+            break;
         case 0:
             Console.WriteLine("Encerrando o sistema...");
             break;
