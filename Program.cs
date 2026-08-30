@@ -64,10 +64,12 @@ do
 
         case 2:
             Console.WriteLine("Cadastrar professor");
+            Principal.CadastrarProfessor();
             break;
 
         case 3:
             Console.WriteLine("Cadastrar aluno");
+            Principal.CadastrarAluno();
             break;
 
         case 4:
@@ -92,6 +94,7 @@ do
 
         case 8:
             Console.WriteLine("Consultar pessoas");
+            Principal.ListarTodasPessoas();
             break;
 
         case 9:
@@ -108,6 +111,7 @@ do
 
         case 12:
             Console.WriteLine("Enviar notificação");
+            Principal.EnviarNotificacao();
             break;
         case 13:
             Console.WriteLine("Boletim");
