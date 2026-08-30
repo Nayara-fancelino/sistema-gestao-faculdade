@@ -1,4 +1,4 @@
-﻿namespace SistemaAcademico
+﻿namespace sistema_gestao_faculdade.Entity
 {
 
     public abstract class Pessoa

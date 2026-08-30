@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SistemaAcademico
+namespace sistema_gestao_faculdade.Entity
 {
     class Program
     {
@@ -43,6 +43,7 @@ namespace SistemaAcademico
 
                     case 2:
                         Console.WriteLine("Cadastrar professor");
+                        Principal.CadastrarProfessor();
                         break;
 
                     case 3:
@@ -67,6 +68,7 @@ namespace SistemaAcademico
 
                     case 8:
                         Console.WriteLine("Consultar pessoas");
+                        Principal.ConsultarPessoas();
                         break;
 
                     case 9:
