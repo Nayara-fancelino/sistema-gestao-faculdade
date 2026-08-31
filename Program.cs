@@ -455,7 +455,7 @@ public static class Program
         foreach (var p in todasPessoas)
         {
             string tipo = p is Aluno ? "Aluno" : "Professor";
-            string identificador = p is Aluno a ? $"Matrícula: {a.NumeroMatricula}" : $"Registro: {((Professor)p).Registro}";
+            string identificador = p is Aluno a ? $"Matrícula: {a.NumeroMatricula} | Curso: {a.Curso}" : $"Registro: {((Professor)p).Registro} | Especialidade: {((Professor)p).Especialidade}";
 
             Console.WriteLine($"[{tipo}] {identificador} | Nome: {p.Nome} | CPF: {p.CPF} | E-mail: {p.Email}");
 
