@@ -4,7 +4,8 @@ List<Professor> professores = new List<Professor>();
 List<Aluno> alunos = new List<Aluno>();
 List<Curso> cursos = new List<Curso>();
 List<Disciplina> disciplinas = new List<Disciplina>();
-List<Boletim> boletins = new List<Boletim>();
+// List<Boletim> boletins = new List<Boletim>();
+List<Matricula> matriculas = new List<Matricula>();
 
 int opcao;
 
@@ -108,15 +109,16 @@ do
     if (opcao != 0)
     {
         Console.WriteLine("\nPressione qualquer tecla para continuar...");
-        Console.ReadKey();
+        Console.ReadLine();
     }
 
 } while (opcao != 0);
 
 
 // 6 - Matricular aluno em curso
-static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
+void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
 {
+	// RF: o aluno deve existir
     if (alunos.Count == 0)
     {
         Console.ForegroundColor = ConsoleColor.Red;
@@ -126,6 +128,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
         return;
     }
 
+	// RF: o curso deve existir
     if (cursos.Count == 0)
     {
         Console.ForegroundColor = ConsoleColor.Red;
@@ -138,7 +141,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
     Console.WriteLine("\n===== MATRICULAR ALUNO EM CURSO =====\n");
 
     Console.Write("Matricula do Aluno: ");
-    var matricula = Console.ReadLine().Trim() ?? string.Empty;
+    var matricula = Console.ReadLine()!.Trim() ?? string.Empty;
 
     var alunoMatricula = alunos.FirstOrDefault(x => x.NumeroMatricula == matricula);
     if (alunoMatricula == null)
@@ -155,7 +158,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
     Console.WriteLine($"Matricula: {alunoMatricula.NumeroMatricula}");
 
     Console.Write("\nCurso: ");
-    var curso = Console.ReadLine().Trim() ?? string.Empty;
+    var curso = Console.ReadLine()!.Trim() ?? string.Empty;
 
     var cursoCodigo = cursos.FirstOrDefault(x => x.Codigo == curso);
     if (cursoCodigo == null)
@@ -173,15 +176,15 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
         return;
     }
 
+	// RF: O aluno nao pode ser matriculado duas vezes no mesmo curso 
     if (alunoMatricula.cursos.Any(x => x.Codigo == curso))
     {
         Console.WriteLine($"\nO aluno já está cadastrado no curso {cursoCodigo.Nome}.");
         return;
     }
 
-    alunoMatricula.cursos.Add(cursoCodigo);
-
-    alunoMatricula.boletins.Add(new Boletim(alunoMatricula, cursoCodigo));
+	Matricula novaMatricula = new Matricula(alunoMatricula, cursoCodigo);
+	matriculas.Add(novaMatricula);
 
     Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine($"\nAluno {alunoMatricula.Nome} cadastrado no curso {cursoCodigo.Nome}!");
