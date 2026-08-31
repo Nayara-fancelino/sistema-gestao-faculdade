@@ -74,7 +74,7 @@ public static class Program
 
                 case 7:
                     Console.WriteLine("Lançar nota");
-                    LancarNota(alunos, cursos, disciplinas);
+                    LancarNota(alunos, cursos, disciplinas, matriculas);
                     break;
 
                 case 8:
@@ -88,18 +88,17 @@ public static class Program
 
                 case 10:
                     Console.WriteLine("Consultar matrículas");
+					ConsultarMatriculas(alunos, cursos, matriculas);
                     break;
 
                 case 11:
                     Console.WriteLine("Consultar boletim");
+					ConsultarBoletim(alunos, cursos, matriculas);
                     break;
 
                 case 12:
                     Console.WriteLine("Enviar notificação");
                     EnviarNotificacao(alunos, professores);
-                    break;
-                case 13:
-                    Console.WriteLine("Boletim");
                     break;
                 case 0:
                     Console.WriteLine("Encerrando o sistema...");
@@ -184,9 +183,11 @@ public static class Program
         }
 
         alunoMatricula.cursos.Add(cursoCodigo);
-        alunoMatricula.boletins.Add(new Boletim(alunoMatricula, cursoCodigo));
 
-        Matricula novaMatricula = new Matricula(alunoMatricula, cursoCodigo);
+        var boletim = new Boletim(alunoMatricula, cursoCodigo);
+        alunoMatricula.boletins.Add(boletim);
+
+        Matricula novaMatricula = new Matricula(alunoMatricula, cursoCodigo, boletim);
         matriculas.Add(novaMatricula);
 
         Console.ForegroundColor = ConsoleColor.Green;
@@ -201,7 +202,7 @@ public static class Program
         Console.WriteLine();
     }
 
-    public static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> disciplinas)
+    public static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> disciplinas, List<Matricula> matriculas)
     {
         if (alunos.Count == 0)
         {
@@ -289,8 +290,17 @@ public static class Program
             return;
         }
 
-        var boletim = alunoEncontrado.boletins.FirstOrDefault(x => x.Curso.Codigo == cursoEncontrado.Codigo);
+        var matriculaEncontrada = matriculas.FirstOrDefault(m => m.Aluno.NumeroMatricula == alunoEncontrado.NumeroMatricula && m.Curso.Codigo == cursoEncontrado.Codigo);
+        if (matriculaEncontrada == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nMatrícula não encontrada para esta disciplina.");
 
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        var boletim = matriculaEncontrada.Boletim;
         if (boletim == null)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -465,6 +475,153 @@ public static class Program
 
             ExibirNotificacoesPessoa(p);
             Console.WriteLine(new string('-', 40));
+        }
+    }
+
+    public static void ConsultarBoletim(List<Aluno> alunos, List<Curso> cursos, List<Matricula> matriculas)
+    {
+        if (alunos.Count == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nNenhum aluno cadastrado.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        if (cursos.Count == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nNenhum curso cadastrado.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        if (matriculas.Count == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nNenhuma matrícula cadastrada.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        Console.WriteLine("\n===== CONSULTAR BOLETIM =====\n");
+
+        Console.Write("Matricula do aluno: ");
+        var matricula = Console.ReadLine()?.Trim() ?? string.Empty;
+
+        Console.Write("Código do curso: ");
+        var codigoCurso = Console.ReadLine()?.Trim() ?? string.Empty;
+
+        var alunoEncontrado = alunos.FirstOrDefault(x => x.NumeroMatricula == matricula);
+        if (alunoEncontrado == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nAluno não encontrado.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        var cursoEncontrado = alunoEncontrado.cursos.FirstOrDefault(c => c.Codigo == codigoCurso);
+        if (cursoEncontrado == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\nCurso informado não encontrado.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        var matriculaEncontrada = matriculas.FirstOrDefault(m => m.Aluno.NumeroMatricula == alunoEncontrado.NumeroMatricula && m.Curso.Codigo == cursoEncontrado.Codigo);
+        if (matriculaEncontrada == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"\nMatrícula não encontrada para o aluno {alunoEncontrado.Nome} no curso {cursoEncontrado.Nome}.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        var boletim = matriculaEncontrada.Boletim;
+        Console.WriteLine("========= BOLETIM =========");
+		Console.WriteLine();
+        Console.WriteLine($"Aluno: {alunoEncontrado.Nome}");
+        Console.WriteLine($"Matrícula: {alunoEncontrado.NumeroMatricula}");
+		Console.WriteLine();
+        Console.WriteLine($"Curso: {cursoEncontrado.Nome}");
+        Console.WriteLine($"Tipo: {Curso.FormatarTipo(cursoEncontrado.Tipo)}");
+
+        if (!cursoEncontrado.disciplinas.Any())
+        {
+            Console.WriteLine("Este curso ainda não possui disciplinas vinculadas.");
+            Console.WriteLine("===========================");
+            return;
+        }
+
+        foreach (var disciplina in cursoEncontrado.disciplinas)
+        {
+			Console.WriteLine();
+            Console.WriteLine(disciplina.Nome);
+
+            if (boletim.Notas.TryGetValue(disciplina.Codigo, out var nota))
+            {
+                Console.WriteLine($"Nota: {nota:F2}");
+                Console.WriteLine($"Situação: {boletim.ObterSituacao(nota)}");
+            }
+            else
+            {
+                Console.WriteLine("Nota: Não lançada");
+                Console.WriteLine("Situação: Não avaliado");
+            }
+        }
+
+        Console.WriteLine("===========================");
+    }
+
+    public static void ConsultarMatriculas(List<Aluno> alunos, List<Curso> cursos, List<Matricula> matriculas)
+    {
+        if (alunos.Count == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nNenhum aluno cadastrado.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        if (cursos.Count == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nNenhum curso cadastrado.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        if (matriculas.Count == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nNenhuma matrícula cadastrada.");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        Console.WriteLine("\n===== CONSULTAR MATRÍCULAS =====\n");
+
+        foreach (var matricula in matriculas)
+        {
+            var aluno = matricula.Aluno;
+            var curso = matricula.Curso;
+
+            Console.WriteLine($"Aluno: {aluno.Nome}");
+            Console.WriteLine($"Matrícula: {aluno.NumeroMatricula}");
+            Console.WriteLine($"Curso: {curso.Nome}");
+            Console.WriteLine($"Tipo: {Curso.FormatarTipo(curso.Tipo)}");
+            Console.WriteLine("---------------------------");
         }
     }
 }
