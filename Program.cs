@@ -44,12 +44,12 @@ do
 
         case 2:
             Console.WriteLine("Cadastrar professor");
-            Principal.CadastrarProfessor();
+            CadastrarProfessor();
             break;
 
         case 3:
             Console.WriteLine("Cadastrar aluno");
-            Principal.CadastrarAluno();
+            CadastrarAluno();
             break;
 
         case 4:
@@ -74,7 +74,7 @@ do
 
         case 8:
             Console.WriteLine("Consultar pessoas");
-            Principal.ListarTodasPessoas();
+            ListarTodasPessoas();
             break;
 
         case 9:
@@ -91,7 +91,7 @@ do
 
         case 12:
             Console.WriteLine("Enviar notificação");
-            Principal.EnviarNotificacao();
+            EnviarNotificacao();
             break;
         case 13:
             Console.WriteLine("Boletim");
@@ -115,7 +115,7 @@ do
 
 
 // 6 - Matricular aluno em curso
-static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
+void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
 {
     if (alunos.Count == 0)
     {
@@ -196,7 +196,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
 }
 
 // 7 - Lançar nota
-static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> disciplinas)
+void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> disciplinas)
 {
     if (alunos.Count == 0)
     {
@@ -322,4 +322,145 @@ static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> 
     Console.WriteLine("\nA nota foi atribuida.");
 
     Console.ForegroundColor = ConsoleColor.White;
+}
+
+void CadastrarProfessor()
+{
+    Console.WriteLine("--- Cadastro de Professor ---");
+    Console.Write("CPF: ");
+    string cpf = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    if (professores.Any(p => p.CPF == cpf) || alunos.Any(a => a.CPF == cpf))
+    {
+        Console.WriteLine("Erro: CPF já cadastrado no sistema!");
+        return;
+    }
+
+    Console.Write("Registro: ");
+    string registro = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    if (professores.Any(p => p.Registro.Equals(registro, StringComparison.OrdinalIgnoreCase)))
+    {
+        Console.WriteLine("Erro: Registro de professor já existe!");
+        return;
+    }
+
+    Console.Write("Nome: ");
+    string nome = Console.ReadLine()?.Trim() ?? string.Empty;
+    Console.Write("E-mail: ");
+    string email = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    if (professores.Any(p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
+       alunos.Any(a => a.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
+    {
+        Console.WriteLine("Erro: Este e-mail já está cadastrado no sistema!");
+        return;
+    }
+
+    Console.Write("Especialidade: ");
+    string especialidade = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    professores.Add(new Professor(nome, cpf, email, registro, especialidade));
+    Console.WriteLine("Professor cadastrado com sucesso!");
+}
+
+void CadastrarAluno()
+{
+    Console.WriteLine("--- Cadastro de Aluno ---");
+    Console.Write("CPF: ");
+    string cpf = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    if (alunos.Any(a => a.CPF == cpf) || professores.Any(p => p.CPF == cpf))
+    {
+        Console.WriteLine("Erro: CPF já cadastrado no sistema!");
+        return;
+    }
+
+    Console.Write("Número de Matrícula: ");
+    string mat = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    if (alunos.Any(a => a.NumeroMatricula.Equals(mat, StringComparison.OrdinalIgnoreCase)))
+    {
+        Console.WriteLine("Erro: Número de matrícula do aluno já existe!");
+        return;
+    }
+
+    Console.Write("Nome: ");
+    string nome = Console.ReadLine()?.Trim() ?? string.Empty;
+    Console.Write("E-mail: ");
+    string email = Console.ReadLine()?.Trim() ?? string.Empty;
+
+    if (professores.Any(p => p.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
+       alunos.Any(a => a.Email.Equals(email, StringComparison.OrdinalIgnoreCase)))
+    {
+        Console.WriteLine("Erro: Este e-mail já está cadastrado no sistema!");
+        return;
+    }
+
+    alunos.Add(new Aluno(nome, cpf, email, mat));
+    Console.WriteLine("Aluno cadastrado com sucesso!");
+}
+
+void ExibirNotificacoesPessoa(Pessoa p)
+{
+    if (p.Notificacoes.Any())
+    {
+        Console.WriteLine("   Notificações:");
+        foreach (var n in p.Notificacoes) Console.WriteLine($"     - {n}");
+    }
+}
+
+void EnviarNotificacao()
+{
+    Console.WriteLine("--- Enviar Notificação ---");
+    List<Pessoa> todasPessoas = new List<Pessoa>();
+    todasPessoas.AddRange(alunos);
+    todasPessoas.AddRange(professores);
+
+    if (!todasPessoas.Any())
+    {
+        Console.WriteLine("Nenhum aluno ou professor cadastrado.");
+        return;
+    }
+
+    Console.WriteLine("Selecione o destinatário:");
+    for (int i = 0; i < todasPessoas.Count; i++)
+    {
+        string tipo = todasPessoas[i] is Aluno ? "Aluno" : "Professor";
+        Console.WriteLine($"{i + 1} - [{tipo}] {todasPessoas[i].Nome}");
+    }
+
+    if (!int.TryParse(Console.ReadLine(), out int index) || index < 1 || index > todasPessoas.Count) return;
+
+    Console.Write("Digite a mensagem da notificação: ");
+    string mensagem = Console.ReadLine() ?? string.Empty;
+
+    todasPessoas[index - 1].ReceberNotificacao(mensagem);
+    Console.WriteLine("Notificação enviada com sucesso!");
+}
+
+void ListarTodasPessoas()
+{
+    Console.WriteLine("--- Lista de Todas as Pessoas Cadastradas ---");
+
+    List<Pessoa> todasPessoas = new List<Pessoa>();
+    todasPessoas.AddRange(alunos);
+    todasPessoas.AddRange(professores);
+
+    if (!todasPessoas.Any())
+    {
+        Console.WriteLine("Nenhuma pessoa (aluno ou professor) cadastrada no sistema.");
+        return;
+    }
+
+    foreach (var p in todasPessoas)
+    {
+        string tipo = p is Aluno ? "Aluno" : "Professor";
+        string identificador = p is Aluno a ? $"Matrícula: {a.NumeroMatricula}" : $"Registro: {((Professor)p).Registro}";
+
+        Console.WriteLine($"[{tipo}] {identificador} | Nome: {p.Nome} | CPF: {p.CPF} | E-mail: {p.Email}");
+
+        ExibirNotificacoesPessoa(p);
+        Console.WriteLine(new string('-', 40));
+    }
 }
