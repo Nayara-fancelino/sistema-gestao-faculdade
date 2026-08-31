@@ -84,6 +84,7 @@ public static class Program
 
                 case 9:
                     Console.WriteLine("Consultar cursos");
+                    ConsultarCursos(cursos, matriculas);
                     break;
 
                 case 10:
@@ -469,12 +470,77 @@ public static class Program
         foreach (var p in todasPessoas)
         {
             string tipo = p is Aluno ? "Aluno" : "Professor";
-            string identificador = p is Aluno a ? $"Matrícula: {a.NumeroMatricula} | Curso: {a.Curso}" : $"Registro: {((Professor)p).Registro} | Especialidade: {((Professor)p).Especialidade}";
+            string identificador = p is Aluno a ? $"Matrícula: {a.NumeroMatricula} | Curso: {a.cursos}" : $"Registro: {((Professor)p).Registro} | Especialidade: {((Professor)p).Especialidade}";
 
             Console.WriteLine($"[{tipo}] {identificador} | Nome: {p.Nome} | CPF: {p.CPF} | E-mail: {p.Email}");
 
             ExibirNotificacoesPessoa(p);
             Console.WriteLine(new string('-', 40));
+        }
+    }
+
+    public static void ConsultarCursos(List<Curso> cursos, List<Matricula> matriculas)
+    {
+        if (cursos.Count == 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nNenhum curso cadastrado.");
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        Console.WriteLine("\n===== CONSULTAR CURSOS =====\n");
+
+        Console.Write("Insira o código do curso que deseja consultar: ");
+        string codigoCurso = Console.ReadLine()?.Trim() ?? string.Empty;
+
+        var curso = cursos.FirstOrDefault(c => string.Equals(c.Codigo, codigoCurso, StringComparison.OrdinalIgnoreCase));
+        if (curso == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("\nCurso não encontrado.");
+            Console.ForegroundColor = ConsoleColor.White;
+            return;
+        }
+
+        Console.WriteLine();
+        Console.WriteLine($"Código: {curso.Codigo}");
+        Console.WriteLine($"Nome: {curso.Nome}");
+        Console.WriteLine($"Tipo: {Curso.FormatarTipo(curso.Tipo)}");
+        Console.WriteLine();
+        Console.WriteLine("Disciplinas:");
+
+        if (curso.disciplinas.Count == 0)
+        {
+            Console.WriteLine("Nenhuma disciplina vinculada.");
+        }
+        else
+        {
+            foreach (var disciplina in curso.disciplinas)
+            {
+                Console.WriteLine($"{disciplina.Nome}");
+                Console.WriteLine($"Professor: {disciplina.Professor.Nome}");
+            }
+        }
+
+        Console.WriteLine();
+        Console.WriteLine("Alunos matriculados:");
+        var alunosMatriculados = matriculas
+            .Where(m => m.Curso.Codigo == curso.Codigo)
+            .Select(m => m.Aluno.Nome)
+            .Distinct()
+            .ToList();
+
+        if (alunosMatriculados.Count == 0)
+        {
+            Console.WriteLine("Nenhum aluno matriculado.");
+        }
+        else
+        {
+            foreach (var nomeAluno in alunosMatriculados)
+            {
+                Console.WriteLine($"{nomeAluno}");
+            }
         }
     }
 
@@ -624,4 +690,6 @@ public static class Program
             Console.WriteLine("---------------------------");
         }
     }
+
+	
 }
