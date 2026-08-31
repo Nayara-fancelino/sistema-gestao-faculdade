@@ -1,29 +1,9 @@
 ﻿using sistema_gestao_faculdade.Entity;
 
-List<Professor> professores = new List<Professor>()
-{
-    new Professor("Eduarda Campos", "12345678900", "CamposProf@gmail.com", "2026020801", "Desenvolvedor de Software"),
-    new Professor("Guilherme Ralla", "12345678901", "RallaProf@gmail.com", "2026020802", "Desenvolvedor Back-End")
-};
-
-List<Aluno> alunos = new List<Aluno>()
-{
-    new Aluno("Pedro Henrique", "12345678902", "PedroAluno01@gmail.com", "20260200"),
-    new Aluno("Leticia Amorin", "12345678903", "AmorinAluno02@gmail.com", "20260201"),
-};
-List<Curso> cursos = new List<Curso>()
-{
-    new Curso("ADS", "Análise e Desenvolvimento de Sistemas", TipoCurso.Graduacao),
-    new Curso("TI", "Tecnologia da Informação", TipoCurso.Graduacao),
-    new Curso("PDFS", "Pós-Graduação em Desenvolvimento Full Stack", TipoCurso.PosGraduacao),
-    new Curso("PES", "Pós-Graduação em Engenharia de Software", TipoCurso.PosGraduacao)
-};
-List<Disciplina> disciplinas = new List<Disciplina>()
-{
-    new Disciplina("POO", "Programação Orientada a Objetos", 250, professores[1])
-};
-
-
+List<Professor> professores = new List<Professor>();
+List<Aluno> alunos = new List<Aluno>();
+List<Curso> cursos = new List<Curso>();
+List<Disciplina> disciplinas = new List<Disciplina>();
 List<Boletim> boletins = new List<Boletim>();
 
 int opcao;
@@ -158,7 +138,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
     Console.WriteLine("\n===== MATRICULAR ALUNO EM CURSO =====\n");
 
     Console.Write("Matricula do Aluno: ");
-    var matricula = Console.ReadLine().Trim().ToUpper();
+    var matricula = Console.ReadLine().Trim() ?? string.Empty;
 
     var alunoMatricula = alunos.FirstOrDefault(x => x.NumeroMatricula == matricula);
     if (alunoMatricula == null)
@@ -175,7 +155,7 @@ static void MatricularAlunoCurso(List<Aluno> alunos, List<Curso> cursos)
     Console.WriteLine($"Matricula: {alunoMatricula.NumeroMatricula}");
 
     Console.Write("\nCurso: ");
-    var curso = Console.ReadLine().Trim().ToUpper();
+    var curso = Console.ReadLine().Trim() ?? string.Empty;
 
     var cursoCodigo = cursos.FirstOrDefault(x => x.Codigo == curso);
     if (cursoCodigo == null)
@@ -239,7 +219,7 @@ static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> 
     Console.WriteLine("\n===== LANÇAR NOTA =====\n");
 
     Console.Write("Matricula do Aluno: ");
-    var matricula = Console.ReadLine().Trim().ToUpper();
+    var matricula = Console.ReadLine().Trim() ?? string.Empty;
 
     var alunoEncontrado = alunos.FirstOrDefault(x => x.NumeroMatricula == matricula);
     if (alunoEncontrado == null)
@@ -252,7 +232,7 @@ static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> 
     }
 
     Console.Write("Curso: ");
-    var curso = Console.ReadLine().ToUpper();
+    var curso = Console.ReadLine().Trim() ?? string.Empty;
 
     var cursoEncontrado = cursos.FirstOrDefault(x => x.Codigo == curso);
     if (cursoEncontrado == null)
@@ -283,7 +263,7 @@ static void LancarNota(List<Aluno> alunos, List<Curso> cursos, List<Disciplina> 
     }
 
     Console.Write("\nDisciplina: ");
-    var disciplina = Console.ReadLine().ToUpper();
+    var disciplina = Console.ReadLine().Trim() ?? string.Empty;
 
     var disciplinaEncontrada = disciplinas.FirstOrDefault(x => x.Codigo == disciplina);
     if (disciplinaEncontrada == null)

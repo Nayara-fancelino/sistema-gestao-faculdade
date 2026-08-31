@@ -2,8 +2,10 @@
 
 namespace sistema_gestao_faculdade.Entity
 {
+
     public class Curso
     {
+
         public string Codigo { get; }
         public string Nome { get; }
         public TipoCurso Tipo { get; }
@@ -32,7 +34,7 @@ namespace sistema_gestao_faculdade.Entity
             Console.WriteLine("\n===== CADASTRAR CURSO =====\n");
 
             Console.Write("Código: ");
-            var codigo = Console.ReadLine().Trim().ToUpper();
+            var codigo = Console.ReadLine().Trim() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(codigo))
             {
@@ -115,7 +117,7 @@ namespace sistema_gestao_faculdade.Entity
             Console.WriteLine("\n===== VINCULAR DISCIPLINA AO CURSO =====\n");
 
             Console.Write("Código: ");
-            string CodigoCurso = Console.ReadLine().Trim().ToUpper();
+            string CodigoCurso = Console.ReadLine().Trim() ?? string.Empty;
 
             var cursoEncontrado = cursos.FirstOrDefault(x => x.Codigo == CodigoCurso);
             if (cursoEncontrado is null)
@@ -128,7 +130,7 @@ namespace sistema_gestao_faculdade.Entity
             }
 
             Console.Write("Disciplina: ");
-            string CodigoDisciplina = Console.ReadLine().Trim().ToUpper();
+            string CodigoDisciplina = Console.ReadLine().Trim() ?? string.Empty;
 
             var disciplinaEncontrada = disciplinas.FirstOrDefault(x => x.Codigo == CodigoDisciplina);
             if (disciplinaEncontrada == null)
